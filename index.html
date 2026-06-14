@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
@@ -13,147 +14,267 @@
 }
 
 body{
-    background:#020b0d;
     overflow:hidden;
-    height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    flex-direction:column;
-    color:white;
+    background:#000;
     font-family:Arial, sans-serif;
 }
 
-#awal{
-    text-align:center;
+#intro{
+    position:absolute;
+    inset:0;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    color:white;
+    z-index:10;
+    background:#000;
 }
 
-h1{
-    font-size:60px;
-    letter-spacing:10px;
+#intro h1{
+    font-size:70px;
+    letter-spacing:8px;
     margin-bottom:20px;
 }
 
-p{
+#intro p{
     margin-bottom:20px;
-    font-size:20px;
 }
 
 button{
-    padding:10px 25px;
+    padding:12px 30px;
+    border:none;
+    border-radius:10px;
     cursor:pointer;
+    font-size:18px;
 }
 
-#scene{
-    display:none;
-    position:relative;
-    width:100%;
-    height:100vh;
-}
-
-.star{
-    position:absolute;
-    width:2px;
-    height:2px;
-    background:white;
-    border-radius:50%;
-}
-
-.flower{
-    position:absolute;
-    bottom:100px;
-    left:50%;
-    transform:translateX(-50%);
-}
-
-.stem{
-    width:6px;
-    height:0;
-    background:#74d1d1;
-    margin:auto;
-    animation:growStem 3s forwards;
-}
-
-.petals{
-    position:relative;
-    opacity:0;
-    animation:showFlower 1s forwards 3s;
-}
-
-.petal{
-    width:30px;
-    height:30px;
-    background:#d8ffff;
-    border-radius:50%;
-    position:absolute;
-}
-
-.p1{top:-15px;left:15px;}
-.p2{top:15px;left:-15px;}
-.p3{top:15px;left:45px;}
-.p4{top:45px;left:15px;}
-
-.center{
-    width:20px;
-    height:20px;
-    background:#fff;
-    border-radius:50%;
-    position:absolute;
-    top:15px;
-    left:15px;
-}
-
-@keyframes growStem{
-    to{
-        height:250px;
-    }
-}
-
-@keyframes showFlower{
-    to{
-        opacity:1;
-    }
+canvas{
+    display:block;
 }
 </style>
 </head>
-
 <body>
 
-<div id="awal">
-    <h1>bayu ❤️</h1>
-    <p>hai pler buat kam nah </p>
+<div id="intro">
+    <h1>BAYU AH AH AH</h1>
+    <p>nah pler buat kam</p>
     <button onclick="mulai()">di klik burit</button>
 </div>
 
-<div id="scene">
-    <div class="flower">
-        <div class="stem"></div>
-
-        <div class="petals">
-            <div class="petal p1"></div>
-            <div class="petal p2"></div>
-            <div class="petal p3"></div>
-            <div class="petal p4"></div>
-            <div class="center"></div>
-        </div>
-    </div>
-</div>
+<canvas id="c"></canvas>
 
 <script>
-for(let i=0;i<200;i++){
-    let star=document.createElement('div');
-    star.className='star';
 
-    star.style.left=Math.random()*100+'%';
-    star.style.top=Math.random()*100+'%';
+const canvas = document.getElementById("c");
+const ctx = canvas.getContext("2d");
 
-    document.body.appendChild(star);
+function resize(){
+    canvas.width = innerWidth;
+    canvas.height = innerHeight;
 }
+resize();
+window.addEventListener("resize",resize);
+
+let started = false;
+
+const stars = [];
+
+for(let i=0;i<250;i++){
+    stars.push({
+        x:Math.random()*innerWidth,
+        y:Math.random()*innerHeight,
+        r:Math.random()*2
+    });
+}
+
+class Bloom{
+    constructor(angle,maxRadius,color){
+
+        this.angle = angle;
+        this.radius = 0;
+        this.maxRadius = maxRadius;
+        this.color = color;
+    }
+
+    update(){
+        if(this.radius < this.maxRadius){
+            this.radius += 0.7;
+        }
+    }
+
+    draw(cx,cy){
+
+        const rad = this.angle*Math.PI/180;
+
+        const x = cx + Math.cos(rad)*this.radius;
+        const y = cy + Math.sin(rad)*this.radius;
+
+        const g = ctx.createRadialGradient(
+            x,y,0,
+            x,y,18
+        );
+
+        g.addColorStop(0,"#ffffff");
+        g.addColorStop(0.3,this.color);
+        g.addColorStop(1,"transparent");
+
+        ctx.fillStyle = g;
+
+        ctx.beginPath();
+        ctx.arc(x,y,15,0,Math.PI*2);
+        ctx.fill();
+    }
+}
+
+const blooms = [];
+
+function createFlower(){
+
+    for(let i=0;i<360;i+=2){
+
+        let r =
+            170 +
+            40*Math.sin(i*5*Math.PI/180);
+
+        blooms.push(
+            new Bloom(
+                i,
+                r,
+                "rgba(140,255,255,1)"
+            )
+        );
+    }
+}
+
+function drawStars(){
+
+    stars.forEach(s=>{
+
+        ctx.beginPath();
+        ctx.fillStyle="white";
+        ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+        ctx.fill();
+
+    });
+
+}
+
+function drawStem(){
+
+    const x = canvas.width/2;
+
+    ctx.strokeStyle="#8aff8a";
+    ctx.lineWidth=5;
+
+    ctx.beginPath();
+    ctx.moveTo(x,canvas.height);
+
+    let stemTop =
+        canvas.height/2 + 120;
+
+    ctx.lineTo(x,stemTop);
+
+    ctx.stroke();
+
+    drawLeaf(x,stemTop+100,-1);
+    drawLeaf(x,stemTop+40,1);
+}
+
+function drawLeaf(x,y,dir){
+
+    ctx.save();
+
+    ctx.translate(x,y);
+    ctx.scale(dir,1);
+
+    ctx.fillStyle="#59ff7a";
+
+    ctx.beginPath();
+    ctx.moveTo(0,0);
+    ctx.quadraticCurveTo(60,-30,80,20);
+    ctx.quadraticCurveTo(40,40,0,0);
+    ctx.fill();
+
+    ctx.restore();
+}
+
+function animate(){
+
+    requestAnimationFrame(animate);
+
+    ctx.fillStyle="rgba(0,0,0,0.15)";
+    ctx.fillRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+    drawStars();
+
+    if(!started) return;
+
+    drawStem();
+
+    const cx = canvas.width/2;
+    const cy = canvas.height/2;
+
+    blooms.forEach(b=>{
+
+        b.update();
+        b.draw(cx,cy);
+
+    });
+
+    const centerGlow =
+        ctx.createRadialGradient(
+            cx,cy,0,
+            cx,cy,70
+        );
+
+    centerGlow.addColorStop(
+        0,
+        "#ffffff"
+    );
+
+    centerGlow.addColorStop(
+        0.4,
+        "#bfffff"
+    );
+
+    centerGlow.addColorStop(
+        1,
+        "transparent"
+    );
+
+    ctx.fillStyle=centerGlow;
+
+    ctx.beginPath();
+    ctx.arc(
+        cx,
+        cy,
+        35,
+        0,
+        Math.PI*2
+    );
+    ctx.fill();
+
+}
+
+animate();
 
 function mulai(){
-    document.getElementById('awal').style.display='none';
-    document.getElementById('scene').style.display='block';
+
+    document.getElementById(
+        "intro"
+    ).style.display="none";
+
+    started = true;
+
+    createFlower();
 }
+
 </script>
 
 </body>
