@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Untuk Sarah ❤️</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    background:#020b0d;
+    overflow:hidden;
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    color:white;
+    font-family:Arial, sans-serif;
+}
+
+#awal{
+    text-align:center;
+}
+
+h1{
+    font-size:60px;
+    letter-spacing:10px;
+    margin-bottom:20px;
+}
+
+p{
+    margin-bottom:20px;
+    font-size:20px;
+}
+
+button{
+    padding:10px 25px;
+    cursor:pointer;
+}
+
+#scene{
+    display:none;
+    position:relative;
+    width:100%;
+    height:100vh;
+}
+
+.star{
+    position:absolute;
+    width:2px;
+    height:2px;
+    background:white;
+    border-radius:50%;
+}
+
+.flower{
+    position:absolute;
+    bottom:100px;
+    left:50%;
+    transform:translateX(-50%);
+}
+
+.stem{
+    width:6px;
+    height:0;
+    background:#74d1d1;
+    margin:auto;
+    animation:growStem 3s forwards;
+}
+
+.petals{
+    position:relative;
+    opacity:0;
+    animation:showFlower 1s forwards 3s;
+}
+
+.petal{
+    width:30px;
+    height:30px;
+    background:#d8ffff;
+    border-radius:50%;
+    position:absolute;
+}
+
+.p1{top:-15px;left:15px;}
+.p2{top:15px;left:-15px;}
+.p3{top:15px;left:45px;}
+.p4{top:45px;left:15px;}
+
+.center{
+    width:20px;
+    height:20px;
+    background:#fff;
+    border-radius:50%;
+    position:absolute;
+    top:15px;
+    left:15px;
+}
+
+@keyframes growStem{
+    to{
+        height:250px;
+    }
+}
+
+@keyframes showFlower{
+    to{
+        opacity:1;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div id="awal">
+    <h1>SARAH ❤️</h1>
+    <p>awkwkwkwkwkwk Nih Untukmu Sayanggggkuuu ❤️</p>
+    <button onclick="mulai()">Klik dong</button>
+</div>
+
+<div id="scene">
+    <div class="flower">
+        <div class="stem"></div>
+
+        <div class="petals">
+            <div class="petal p1"></div>
+            <div class="petal p2"></div>
+            <div class="petal p3"></div>
+            <div class="petal p4"></div>
+            <div class="center"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+for(let i=0;i<200;i++){
+    let star=document.createElement('div');
+    star.className='star';
+
+    star.style.left=Math.random()*100+'%';
+    star.style.top=Math.random()*100+'%';
+
+    document.body.appendChild(star);
+}
+
+function mulai(){
+    document.getElementById('awal').style.display='none';
+    document.getElementById('scene').style.display='block';
+}
+</script>
+
+</body>
+</html>
